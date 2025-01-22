@@ -3,10 +3,11 @@ const cors = require('cors');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const app = express();
-
+const morgan = require('morgan');
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(morgan('dev')); 
 app.use((req, res, next) => {
     console.log('Hello from the middleware 👋');
     next();
@@ -16,11 +17,20 @@ app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();
 });
-
 // Load tours data
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/data/tours-simple.json`, 'utf-8'));
-
-// Handlers
+const users =JSON.parse(fs.readFileSync(`${__dirname}/data/users.json`,'uts-8'))
+app.post('/api/v1/auth/login',(req,res)=>{
+    const{email,password}= req.body
+    console.log(`helle ${email}`);
+    res.send(`helle ${email} wellcome to your page`)
+})
+app.post('/api/v1/auth/signup',(req,res)=>{
+    const{name,email,password}=req.body
+    console.log(`wellcome to this channel ${name}`);
+    res.send(`wellcome to this channel ${name} you have successfully signed up`)
+    
+})
 const getAllTours = (req, res) => {
     console.log(`Request time is ${req.requestTime}`);
     try {
@@ -38,7 +48,6 @@ const getAllTours = (req, res) => {
         });
     }
 };
-
 const getSpecificTour = (req, res) => {
     const id = req.params.id * 1;
     const tour = tours.find(el => el.id === id);
@@ -127,7 +136,7 @@ app.route('/api/v1/tours/:id')
     .get(getSpecificTour)
     .patch(patchTour)
     .delete(deleteTour);
-
+app.route('/api/v1/users')
 const PORT = 5173;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
