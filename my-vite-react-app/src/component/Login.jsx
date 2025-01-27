@@ -7,7 +7,6 @@ const Login = () => {
   const [password,setPssword]=useState("");
   const hundlesubmit=async(e)=>{
     e.preventDefault()
-    
       if(!email || !password){
         alert("email and password are required")
         return;
@@ -44,5 +43,4 @@ const Login = () => {
     </div>
   );
 };
-
 export default Login;

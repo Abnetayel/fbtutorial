@@ -12,12 +12,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
-
+app.use(express.static(`${__dirname}/public`));
 app.use((req, res, next) => {
     console.log('Hello from the middleware 👋');
     next();
 });
-
 app.use((req, res, next) => {
     console.log('Hello from the second middleware 👋');
     req.requestTime = new Date().toISOString();
@@ -38,8 +37,4 @@ app.post('/api/v1/auth/signup', (req, res) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
-
-const PORT = 5173;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+ module.exports = app;
