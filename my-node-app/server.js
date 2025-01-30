@@ -10,7 +10,8 @@ if (!process.env.DATABASE) {
 
 const DB = process.env.DATABASE.replace('<password>', process.env.DATABASE_PASSWORD);
 
-mongoose.connect(DB, {
+// mongoose.connect(DB, {
+mongoose.connect(process.env.DATABASE_LOCAL,{
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
     // useFindAndModify: false,
@@ -35,7 +36,6 @@ const userschema=new mongoose.Schema({
         required:[true,'user must have email']
     }
 })
-
 const User=new mongoose.model('User',userschema)
 const users=[
     {

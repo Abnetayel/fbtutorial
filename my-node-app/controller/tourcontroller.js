@@ -21,7 +21,28 @@ const Tour=require('../models/tourmodel');
 //     }
 //     next();
 // }
-exports.getAllTours = (req, res) => {
+exports.getAllTours = async(req, res) => {
+    try{
+        const querobject= {...req.query}
+        const excludedFields = ['sort', 'page', 'limit'];
+        excludedFields.forEach(el => delete querobject[el]);
+        console.log(req.query)
+        // const tours = await Tour.find() 
+        const query =  Tour.find(querobject)
+        const tours= await query
+        res.status(200).json({
+            status:"success",
+            results:tours.length,
+            data:{tours}
+        })
+    }
+    catch(err){
+        res.status(500).json({
+            status: 'error',
+            message: err.message
+        });
+    }
+// const tours = await Tour.find() 
     // console.log(`Request time is ${req.requestTime}`);
     // try {
     //     res.status(200).json({
@@ -38,7 +59,7 @@ exports.getAllTours = (req, res) => {
     // }
 };
 
-exports.getSpecificTour = (req, res) => {
+exports.getSpecificTour = async(req, res) => {
     // const id = parseInt(req.params.id, 10);
     // const id = req.params.id * 1;
     // const tour = tours.find(el => el.id === id);
@@ -55,6 +76,21 @@ exports.getSpecificTour = (req, res) => {
 //         data: { tour }
 //     });
 // };
+try{
+    const tour = await Tour.findById(req.params.id)
+    // const tour =await Tour.find({_id:req.params.id})
+    // const tour = await Tour.find({"name":"Grand Canyon Adventure"})
+    res.status(202).json({
+      status:'success',
+      data:{tour}  
+    })
+}
+catch(err){
+    res.status(404).json({
+        status:'fail',
+        message:err.message
+    })
+}
 }
 exports.postTour =  async(req, res) =>{
  try{
@@ -91,8 +127,8 @@ catch(err){
 //     }
 // };
 
-exports.patchTour = (req, res) => {
-    res.send('patchTour');
+exports.patchTour = async(req, res) => {
+    // res.send('patchTour');
     // const id = parseInt(req.params.id, 10);
 //    const { tour } = req;
 
@@ -104,9 +140,24 @@ exports.patchTour = (req, res) => {
 //             data: { tour }
 //         });
 //     });
+
+try{const tour = await Tour.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true}); 
+res.status(200).json({
+    status:'success',
+    data:{
+        tour
+    }
+})
+}
+catch(err){
+    res.status(404).json({
+        status:'fail',
+        message:err
+    })
+}
 };
 
-exports.deleteTour = (req, res) => {
+exports.deleteTour =async (req, res) => {
     // const id = parseInt(req.params.id, 10);
     // const id = req.params.id * 1;
     // const tourIndex = tours.findIndex(el => el.id === id);
@@ -126,4 +177,18 @@ exports.deleteTour = (req, res) => {
     //         data: null
     //     });
     // });
+try{
+await Tour.findByIdAndDelete(req.params.id)
+    res.status(200).json({
+        status:'success',
+        message:'tour is deleted successfully'
+    })
+}
+catch(err){
+    res.status(404).json({
+        status:'fail',
+        message:err
+    })
+}
+
 };
